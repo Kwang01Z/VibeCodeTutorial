@@ -1,0 +1,108 @@
+1) Điều khiển & cảm giác điều khiển
+
+Thời gian thực thi: thời lượng nhảy/trượt, tốc độ đổi làn (ms), có input buffer (ví dụ 80–120ms) và coyote time cho nhảy.
+Huỷ/chuỗi hành động: đang đổi làn có thể nhảy/trượt. trượt có thể huỷ bằng nhảy.
+Giới hạn spam: cooldown tối thiểu giữa 2 lần đổi làn/nhảy/trượt.
+
+Ngưỡng vuốt trên mobile (px, thời lượng), chế độ thuận tay trái.
+
+2) Va chạm & luật an toàn
+
+Hitbox: theo capsule
+I-frames sau khi mất 1 mạng (ví dụ 1.0–1.5s bất tử + ghost).
+
+Va chạm khi đổi làn:  dùng quãng “blend” giữa 2 làn
+
+Giới hạn mạng tối đa (life có vượt 3).
+
+3) Vật phẩm (item) — thông số & chồng hiệu ứng
+
+Thời lượng (s), tỷ lệ rơi, khoảng cách spawn tối thiểu giữa 2 lần xuất hiện.
+
+Stacking/ưu tiên: Invisible không đè hitbox lên Nam châm/x2. x2 có cộng dồn nhiều lần lên x3, x4.
+
+Trang bị thủ công: số slot trang bị hiện tại chỉ 1 (có thể mở rộng về sau), cooldown từng item, có làm chậm thời gian khi mở bánh xe item.
+Thông số gợi ý: Nam châm (bán kính hút = 1–1.5 làn), x2 (10–12s), Invisible (3–5s), Life (chỉ hồi nếu < cap).
+
+4) Chướng ngại & hệ thống spawn
+
+Phân loại: thấp (né bằng nhảy), cao (né bằng trượt), chắn làn (né bằng đổi làn), động/tĩnh, di chuyển thấp/cao qua lại giữa các làn, di chuyển trước về sau
+
+Chunk/segment: độ dài, tag độ khó cho từng chunk, quy tắc nối (không đặt 2 chunk “khó” liên tiếp).
+
+Seed: có dùng seed để tái lập run/ghi replay
+
+Chống rác: tối thiểu X mét giữa 2 bẫy “khó”, không spawn item ngay trước cụm chướng ngại “không thể né”.
+
+5) Nhịp độ & đường cong độ khó
+
+Công thức tốc độ: v(t) = v0 + a·t hoặc theo mốc quãng đường; đặt vmax để tránh mất kiểm soát.
+
+Score: tính từ quãng đường + hệ số tốc độ + bonus xương cá (đã nhân x2).
+
+Gia tốc mượt (lerp/curve) tránh “gắt” khi qua mốc.
+
+6) Nhiệm vụ (Mission)
+
+Loại nhiệm vụ: chạy Y mét, nhặt N xương cá, tránh M chướng ngại, dùng K lần item, đạt combo không va chạm X giây…
+
+Tầng độ khó & thưởng tăng dần; reroll miễn phí 1 lần/ngày
+
+Số nhiệm vụ song song (3) và giới hạn đổi.
+
+7) Tiền tệ & cân bằng kinh tế
+
+Nguồn vào: xương cá trên đường, thưởng nhiệm vụ, đăng nhập ngày, mốc quãng đường; bẫy chuột từ nhiệm vụ/đường chạy/nạp.
+
+Nguồn ra (sink): mua theme/nhân vật/phụ kiện, mua item tiêu hao, revive.
+
+Revive: giá bẫy chuột tăng dần mỗi lần trong cùng lượt. hồi về tốc độ thấp hơn, cấp I-frames 2–3s.
+
+Phần thưởng Endgame: quy đổi rõ ràng (ví dụ 1.0x tổng xương cá + bonus theo quãng đường).
+
+8) Nhân vật & phụ kiện
+
+có chỉ số (thời lượng item +5%, bất tử trong X giây đầu, đỡ 1 lần mất mạng, v.v.)
+
+Phụ kiện có ảnh hưởng gameplay.
+9) Theme
+
+thay đổi cả gameplay (loại chướng ngại, ánh sáng, FOV/camera, hiệu ứng trời mưa làm giảm tầm nhìn…).
+
+Bảng spawn riêng cho từng theme; điều kiện mở khóa.
+
+10) Leaderboard & chống gian lận
+
+Phạm vi: điểm cao cá nhân
+
+Tie-breaker: quãng đường lớn hơn, thời gian đạt mốc, số xương cá.
+
+11) UX/UI chi tiết
+
+Onboarding/Tutorial: hướng dẫn cử chỉ trong 30–60s đầu.
+
+Pause & resume: có countdown 3→1 khi quay lại.
+
+Thông báo item: badge + timer vòng tròn; cảnh báo “sắp hết hiệu lực”.
+
+Feedback: rung/haptic, vignette khi Invisible, âm báo tăng tốc.
+
+12) Kỹ thuật & tối ưu (Unity)
+
+Pooling obstacle/item; bản đồ theo chunk (Addressables).
+
+ScriptableObject: ItemDefinition, ThemeDefinition, ObstacleConfig, MissionDefinition, SpeedCurve.
+
+FixedUpdate vs Update: input ở Update, chuyển động/va chạm ở FixedUpdate (nếu dùng physics).
+
+Safe area & tỉ lệ màn (886*1920), 120FPS.
+
+Save: binary local.
+
+Analytics: các event nên có — start_run/end_run, distance, coins, hits, item_pick/use, mission_progress, revive_used, speed_peaks.
+
+13) Âm thanh & accessibility
+
+Mixer tách Music/SFX; ducking khi pause/popup.
+
+Tùy chọn mù màu, một tay, chỉnh độ nhạy vuốt.
